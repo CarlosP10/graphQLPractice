@@ -48,16 +48,26 @@ final class MainView: UIView {
     
     //MARK: - Private
     private func setUpViewsAndConstraints() {
+        translatesAutoresizingMaskIntoConstraints = false
         //Adding Views
         spinner = SpinnerUtility.addSpinner(to: self)
         addSubview(stackView)
         stackView.addArrangedSubviews(topLabel, tableView)
         
         //Constrains Views
-        addAndPinArea(stackView)
+        addAndPinArea()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func addAndPinArea() {
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
     }
 }

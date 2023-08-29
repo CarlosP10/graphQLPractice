@@ -13,7 +13,7 @@ class SpinnerUtility {
         spinner.hidesWhenStopped = true
         spinner.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(spinner)
-        
+        spinner.backgroundColor = .red
         NSLayoutConstraint.activate([
             spinner.widthAnchor.constraint(equalToConstant: 100),
             spinner.heightAnchor.constraint(equalToConstant: 100),

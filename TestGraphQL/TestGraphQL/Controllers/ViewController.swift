@@ -13,7 +13,18 @@ final class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addAndPinToSafeArea(mainView)
+        //view.addAndPinToSafeArea(mainView)
+        addAndPinToSafeArea()
+    }
+    
+    func addAndPinToSafeArea() {
+        view.addSubview(mainView)
+        NSLayoutConstraint.activate([
+            mainView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            mainView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            mainView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            mainView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
     }
     
     
