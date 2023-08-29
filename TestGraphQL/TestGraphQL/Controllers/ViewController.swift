@@ -7,13 +7,16 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
+    
+    private let mainView = MainView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .blue
+        view.addAndPinToSafeArea(mainView)
     }
-
+    
+    
 
 }
 
