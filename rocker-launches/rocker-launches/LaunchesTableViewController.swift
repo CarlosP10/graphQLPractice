@@ -24,8 +24,7 @@ class LaunchesTableViewController: UITableViewController {
         return dateFormatter
     }()
     
-    private var launchesUpcoming: [LaunchesQuery.Data.LaunchesUpcoming] = []
-    private var launchesPast: [LaunchesQuery.Data.LaunchesPast] = []
+    private var launches: [[LaunchFragment]] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,8 +38,10 @@ class LaunchesTableViewController: UITableViewController {
         NetworkService.shared.apollo.fetch(query: query) { [weak self] result in
             switch result {
             case .success(let value):
-                self?.launchesUpcoming = value.data?.launchesUpcoming?.compactMap{ $0 } ?? []
-                self?.launchesPast = value.data?.launchesPast?.compactMap{ $0 } ?? []
+                self?.launches = [
+                    value.data?.launchesUpcoming?.compactMap{ $0?.fragments.launchFragment } ?? [],
+                    value.data?.launchesPast?.compactMap{ $0?.fragments.launchFragment } ?? []
+                ]
                 self?.tableView.reloadData()
                 
             case .failure(let error):
@@ -59,44 +60,22 @@ class LaunchesTableViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        launches.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0: return launchesUpcoming.count
-        case 1: return launchesPast.count
-        default: return 0
-        }
+        launches[section].count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LaunchCell", for: indexPath)
+        let launch = launches[indexPath.section][indexPath.row]
         
         var contentConfiguration = UIListContentConfiguration.subtitleCell()
-        
-        let cellText: String
-        let cellSecondaryText: String
-        
-        switch indexPath.section {
-        case 0:
-            let launchUpcoming = launchesUpcoming[indexPath.row]
-            cellText = launchUpcoming.mission_name ?? ""
-            let launchDate = inDateFormatter.date(from: launchUpcoming.launch_date_utc ?? "") ?? .now
-            cellSecondaryText = outDateFormatter.string(from: launchDate)
-        case 1:
-            let launchPast = launchesPast[indexPath.row]
-            cellText = launchPast.mission_name ?? ""
-            let launchDate = inDateFormatter.date(from: launchPast.launch_date_utc ?? "") ?? .now
-            cellSecondaryText = outDateFormatter.string(from: launchDate)
-            
-        default:
-            cellText = ""
-            cellSecondaryText = ""
-        }
-        
-        contentConfiguration.text = cellText
-        contentConfiguration.secondaryText = cellSecondaryText
+
+        contentConfiguration.text = launch.mission_name ?? ""
+        let launchDate = inDateFormatter.date(from: launch.launch_date_utc ?? "") ?? .now
+        contentConfiguration.secondaryText = outDateFormatter.string(from: launchDate)
         
         cell.contentConfiguration = contentConfiguration
         
